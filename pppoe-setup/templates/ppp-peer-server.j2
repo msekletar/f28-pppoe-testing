@@ -1,0 +1,13 @@
+{{ ansible_managed | comment }}
+
+plugin rp-pppoe.so
+rp_pppoe_ac 'testac'
+rp_pppoe_service 'testservice'
+eth1
+name "client"
+usepeerdns
+persist
+nodefaultroute
+hide-password
+noauth
+debug

@@ -1,0 +1,33 @@
+---
+- import_playbook: install.yml
+
+- name: setup pppoe client
+  hosts: all
+  become: true
+  tasks:
+    - name: copy secrets file
+      template:
+        src: templates/pap-secrets-client.j2
+        dest: /etc/ppp/pap-secrets
+        owner: root
+        group: root
+
+    - name: create directory for storing peer specific ppp config files
+      file:
+        path: /etc/ppp/peers
+        state: directory
+        owner: root
+        group: root
+
+    - name: copy ppp config
+      template:
+        src: templates/ppp-peer-server.j2
+        dest: /etc/ppp/peers/server
+        owner: root
+        group: root
+        
+    - name: set eth1 up
+      command: ip link set eth1 up
+
+    - name: initiate ppp connection to server
+      command: pppd call server

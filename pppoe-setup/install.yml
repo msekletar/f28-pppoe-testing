@@ -1,0 +1,30 @@
+---
+- name: install packages
+  hosts: all
+  become: true
+  tasks:
+    - name: install packages
+      dnf:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - ppp
+        - rp-pppoe
+        - kernel
+        - kernel-modules
+
+    - name: reboot host
+      shell: sleep 2 && /sbin/shutdown -r now
+      async: true
+      poll: false
+      ignore_errors: true
+
+    - name: waiting for server to boot up
+      local_action: wait_for
+      args:
+        host: "{{ ansible_default_ipv4.address }}"
+        port: 22
+        delay: 30
+        timeout: 300
+        state: started
+      become: false

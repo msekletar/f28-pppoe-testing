@@ -1,0 +1,29 @@
+---
+- import_playbook: install.yml
+
+- name: setup pppoe server
+  hosts: all
+  become: true
+  vars:
+    # hashed (sha-512) version of "secret" password
+    - password: '$6$rounds=656000$VLMW2URp9NF/wPom$E63p8YOd8kLAzpvmaPFl0ItPdLCMZwSegjXa4DuD.Ka8J/bfvr7O5EGN7BrBUBUDBAm69pzWm/4GrvwRAoL9K/'
+  tasks:
+    - name: copy secrets file
+      template:
+        src: templates/pap-secrets-server.j2
+        dest: /etc/ppp/pap-secrets
+        owner: root
+        group: root
+
+    - name: add user client
+      user:
+        name: client
+        password: "{{ password }}"
+
+    - name: allow ppp peer to use IP from 192.168.127.0/24 network
+      lineinfile:
+        path: /etc/ppp/pppoe-server-options
+        line: allow-ip 192.168.127.0/24
+
+    - name: run pppoe-server
+      command: pppoe-server -I eth1 -C testac -S testservice -L 192.168.127.20 -R 192.168.127.100 -N 100
