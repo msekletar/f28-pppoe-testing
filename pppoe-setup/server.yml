@@ -30,7 +30,7 @@
         path: /etc/ppp/pppoe-server-options
         line: require-mschap-v2
 
-    - name: require mschap-v2
+    - name: make sure we don't use pap auth method
       lineinfile:
         path: /etc/ppp/pppoe-server-options
         line: require-pap
