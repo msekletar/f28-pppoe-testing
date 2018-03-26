@@ -11,7 +11,7 @@
     - name: copy secrets file
       template:
         src: templates/pap-secrets-server.j2
-        dest: /etc/ppp/pap-secrets
+        dest: /etc/ppp/chap-secrets
         owner: root
         group: root
 
@@ -24,6 +24,17 @@
       lineinfile:
         path: /etc/ppp/pppoe-server-options
         line: allow-ip 192.168.127.0/24
+
+    - name: require mschap-v2
+      lineinfile:
+        path: /etc/ppp/pppoe-server-options
+        line: require-mschap-v2
+
+    - name: require mschap-v2
+      lineinfile:
+        path: /etc/ppp/pppoe-server-options
+        line: require-pap
+        state: absent
 
     - name: run pppoe-server
       command: pppoe-server -I eth1 -C testac -S testservice -L 192.168.127.20 -R 192.168.127.100 -N 100

@@ -8,7 +8,7 @@
     - name: copy secrets file
       template:
         src: templates/pap-secrets-client.j2
-        dest: /etc/ppp/pap-secrets
+        dest: /etc/ppp/chap-secrets
         owner: root
         group: root
 
